@@ -47,7 +47,11 @@ TG_ch = cell(1);
 
 % Get PSD after time delay
 fs = 250; % 250 Hz sampling rate
-t = round(fs * 0.25);
+
+% 1 second delay
+t_start = round(fs * 1);
+% 3 second delay
+t_end = round(fs * 3);
 
 for i = 1:length(LH_t)
     
@@ -57,20 +61,12 @@ for i = 1:length(LH_t)
     end_FT = min(find(start_trial_t > FT_t(i)));
     end_TG = min(find(start_trial_t > TG_t(i)));
     
-    if i == 72
-        % For each trial, expand cell
-        LH_ch{end+1} = s(LH_t(i)+t:end,:);
-        RH_ch{end+1} = s(RH_t(i)+t:end,:);
-        FT_ch{end+1} = s(FT_t(i)+t:end,:);
-        TG_ch{end+1} = s(TG_t(i)+t:end,:);
-    else
-        % For each trial, expand cell
-        LH_ch{end+1} = s(LH_t(i)+t:start_trial_t(end_LH),:);
-        RH_ch{end+1} = s(RH_t(i)+t:start_trial_t(end_RH),:);
-        FT_ch{end+1} = s(FT_t(i)+t:start_trial_t(end_FT),:);
-        TG_ch{end+1} = s(TG_t(i)+t:start_trial_t(end_TG),:);
-    end
-    
+    % For each trial, expand cell
+    LH_ch{end+1} = s(LH_t(i)+t_start:LH_t(i)+t_end,:);
+    RH_ch{end+1} = s(RH_t(i)+t_start:RH_t(i)+t_end,:);
+    FT_ch{end+1} = s(FT_t(i)+t_start:FT_t(i)+t_end,:);
+    TG_ch{end+1} = s(TG_t(i)+t_start:TG_t(i)+t_end,:);
+
 end
 
 LH_ch(1) = [];
@@ -120,16 +116,19 @@ testX_ch = cell(1);
 
 % Get PSD after time delay
 fs = 250; % 250 Hz sampling rate
-t = round(fs * 0.25);
+% 1 second delay
+t_start = round(fs * 1);
+% 3 second delay
+t_end = round(fs * 3);
 
 for i = 1:length(start_trial_tT)
     
     if i == 288
         % For each trial, expand cell
-        testX_ch{end+1} = s_test(start_trial_tT(i)+t:end,:);
+        testX_ch{end+1} = s_test(start_trial_tT(i)+t_start:start_trial_tT(i)+t_end,:);
     else
         % For each trial, expand cell
-        testX_ch{end+1} = s_test(start_trial_tT(i)+t:start_trial_tT(i+1),:);
+        testX_ch{end+1} = s_test(start_trial_tT(i)+t_start:start_trial_tT(i)+t_end,:);
     end
     
 end
@@ -163,35 +162,19 @@ ylabel("Power Spectral Density (W/Hz)")
 legend('Left Hand', 'Right Hand', 'Foot', 'Tongue')
 hold off
 
-%% PSD using Prefrontal Cortex
+%% PSD using Somatosensory Cortex
 
 figure
 hold on 
 grid on
-shadedErrorBar(LH_p{1,2},LH_p{1,1}(:,[1,3,5])',{@median,@std},'lineProps','-r');
-shadedErrorBar(RH_p{1,2},RH_p{1,1}(:,[1,3,5])',{@median,@std},'lineProps','-b');
-shadedErrorBar(FT_p{1,2},FT_p{1,1}(:,[1,3,5])',{@median,@std},'lineProps','-c');
-shadedErrorBar(TG_p{1,2},TG_p{1,1}(:,[1,3,5])',{@median,@std},'lineProps','-g');
-title("Power Spectral Densities using Prefrontal Cortex")
+shadedErrorBar(LH_p{1,2},LH_p{1,1}(:,[8,10,12])',{@median,@std},'lineProps','-r');
+shadedErrorBar(RH_p{1,2},RH_p{1,1}(:,[8,10,12])',{@median,@std},'lineProps','-b');
+shadedErrorBar(FT_p{1,2},FT_p{1,1}(:,[8,10,12])',{@median,@std},'lineProps','-c');
+shadedErrorBar(TG_p{1,2},TG_p{1,1}(:,[8,10,12])',{@median,@std},'lineProps','-g');
+title("Power Spectral Densities using Somatosensory Cortex")
 xlabel("Frequency (Hz)")
 ylabel("Power Spectral Density (W/Hz)")
 legend('Left Hand', 'Right Hand', 'Foot', 'Tongue')
-hold off
-
-%% PSD using Prefrontal Cortex and 8-30 Hz
-
-figure
-hold on 
-grid on
-shadedErrorBar(LH_p{1,2}(49:183),LH_p{1,1}(49:183,[1,3,5])',{@median,@std},'lineProps','-r');
-shadedErrorBar(RH_p{1,2}(49:183),RH_p{1,1}(49:183,[1,3,5])',{@median,@std},'lineProps','-b');
-shadedErrorBar(FT_p{1,2}(49:183),FT_p{1,1}(49:183,[1,3,5])',{@median,@std},'lineProps','-c');
-shadedErrorBar(TG_p{1,2}(49:183),TG_p{1,1}(49:183,[1,3,5])',{@median,@std},'lineProps','-g');
-title("Power Spectral Densities using Prefrontal Cortex")
-xlabel("Frequency (Hz)")
-ylabel("Power Spectral Density (W/Hz)")
-legend('Left Hand', 'Right Hand', 'Foot', 'Tongue')
-xlim([8 30])
 hold off
 
 %% Bin Frequencies
@@ -275,16 +258,16 @@ for i = 1:length(testX_p)
     testX_bin{i,2} = hold_test(:,dim+1);
     
 end
-%% PSD using Prefrontal Cortex and 8-30 Hz With Binning
+%% PSD using Somatosensory Cortex and 8-30 Hz With Binning
 
 figure
 hold on 
 grid on
-shadedErrorBar(LH_bin{1,2},LH_bin{1,1}(:,[1,3,5])',{@median,@std},'lineProps','-r');
-shadedErrorBar(RH_bin{1,2},RH_bin{1,1}(:,[1,3,5])',{@median,@std},'lineProps','-b');
-shadedErrorBar(FT_bin{1,2},FT_bin{1,1}(:,[1,3,5])',{@median,@std},'lineProps','-c');
-shadedErrorBar(TG_bin{1,2},TG_bin{1,1}(:,[1,3,5])',{@median,@std},'lineProps','-g');
-title("Power Spectral Densities using Prefrontal Cortex with Binning")
+shadedErrorBar(LH_bin{1,2},LH_bin{1,1}(:,[8,10,12])',{@median,@std},'lineProps','-r');
+shadedErrorBar(RH_bin{1,2},RH_bin{1,1}(:,[8,10,12])',{@median,@std},'lineProps','-b');
+shadedErrorBar(FT_bin{1,2},FT_bin{1,1}(:,[8,10,12])',{@median,@std},'lineProps','-c');
+shadedErrorBar(TG_bin{1,2},TG_bin{1,1}(:,[8,10,12])',{@median,@std},'lineProps','-g');
+title("Power Spectral Densities using Somatosensory Cortex with Binning")
 xlabel("Frequency (Hz)")
 ylabel("Power Spectral Density (W/Hz)")
 legend('Left Hand', 'Right Hand', 'Foot', 'Tongue')
